@@ -1,0 +1,105 @@
+version: '3'
+
+services:
+  mysqldb-customers:
+    image: mysql:8.0
+    container_name: mysqldb-customers
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=customers
+      - MYSQL_TCP_PORT=3306
+
+  customers-svc:
+    build:
+      context: ./customers
+    container_name: customers-svc
+    restart: always
+    mem_limit: 512M
+    environment:
+      - MYSQL_URL=jdbc:mysql://mysqldb-customers/customers
+      - MYSQL_USER=root
+      - MYSQL_PASS=root
+    depends_on:
+      - mysqldb-customers
+
+  mysqldb-visits:
+    image: mysql:8.0
+    container_name: mysqldb-visits
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=visits
+      - MYSQL_TCP_PORT=3306
+  
+  visits-svc:
+    build:
+      context: ./visits
+    container_name: visits-svc
+    restart: always
+    mem_limit: 512M
+    environment:
+      - MYSQL_URL=jdbc:mysql://mysqldb-visits/visits
+      - MYSQL_USER=root
+      - MYSQL_PASS=root
+    depends_on:
+      - mysqldb-visits
+
+  mysqldb-vets:
+    image: mysql:8.0
+    container_name: mysqldb-vets
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=vets
+      - MYSQL_TCP_PORT=3306
+
+  vets-svc:
+    build:
+      context: ./vets
+    container_name: vets-svc
+    restart: always
+    mem_limit: 512M
+    environment:
+      - MYSQL_URL=jdbc:mysql://mysqldb-vets/vets
+      - MYSQL_USER=root
+      - MYSQL_PASS=root
+    depends_on:
+      - mysqldb-vets
+
+  kong:
+    image: kong
+    container_name: kong
+    environment:
+      - KONG_DATABASE=off
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+    depends_on:
+      - vets-svc
+      - visits-svc
+      - customers-svc
+    ports:
+      - 8000:8000
+
+  configure-kong:
+    build:
+      context: ./kong
+    container_name: configure-kong
+    depends_on:
+      - kong
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    mem_limit: 512M
+    depends_on:
+      - vets-svc
+      - visits-svc
+      - customers-svc
+      - kong
+    ports:
+      - 8080:8080

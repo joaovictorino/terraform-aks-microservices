@@ -1,0 +1,29 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+- name: customers
+  url: http://customers-svc:8081
+  routes:
+  - name: customers-rt
+    paths:
+    - /api/customer
+    - /api/gateway
+- name: vets
+  url: http://vets-svc:8083
+  routes:
+  - name: vets-rt
+    paths:
+    - /api/vet
+- name: visits
+  url: http://visits-svc:8082
+  routes:
+  - name: visits-rt
+    paths:
+    - /api/visit
+
+plugins:
+- name: cors
+  config: 
+    origins:
+    - "*"
