@@ -7,3 +7,8 @@ COPY scripts/. /usr/share/nginx/html/scripts
 COPY webjars/. /usr/share/nginx/html/webjars
 COPY index.html /usr/share/nginx/html/index.html
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY run.sh /run.sh
+
+RUN chmod 777 run.sh
+
+ENTRYPOINT [ "./run.sh" ]

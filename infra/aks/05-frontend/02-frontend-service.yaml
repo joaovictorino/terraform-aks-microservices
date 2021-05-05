@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: springapp
+  name: frontend-svc
+  namespace: aulainfra
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "http-80"
+    port: 80
+    targetPort: 8080
+  selector:
+    app: frontend
+    

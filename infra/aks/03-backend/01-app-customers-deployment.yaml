@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app-customers
+  name: app-customers
+  namespace: aulainfra
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-customers
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  template:
+    metadata:
+      labels:
+        app: app-customers
+    spec:
+      containers:
+      - image: aulainfraacr.azurecr.io/customers
+        imagePullPolicy: Always
+        name: backend-customers
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: app-configmap
+                key: TZ
+          - name: MYSQL_URL
+            value: jdbc:mysql://mysqldb-customers/customers
+          - name: MYSQL_USER
+            value: root
+          - name: MYSQL_PASS
+            value: root
+        ports:
+          - containerPort: 8081
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}

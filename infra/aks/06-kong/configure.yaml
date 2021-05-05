@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+  namespace: aulainfra
+spec:
+  containers:
+  - image: aulainfraacr.azurecr.io/configure-kong
+    name: configure-kong
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"

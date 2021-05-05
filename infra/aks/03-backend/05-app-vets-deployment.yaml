@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: app-vets
+  name: app-vets
+  namespace: aulainfra
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-vets
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  template:
+    metadata:
+      labels:
+        app: app-vets
+    spec:
+      containers:
+      - image: aulainfraacr.azurecr.io/vets
+        imagePullPolicy: Always
+        name: backend-vets
+        env:
+          - name: TZ
+            valueFrom:
+              configMapKeyRef:
+                name: app-configmap
+                key: TZ
+          - name: MYSQL_URL
+            value: jdbc:mysql://mysqldb-vets/vets
+          - name: MYSQL_USER
+            value: root
+          - name: MYSQL_PASS
+            value: root
+        ports:
+          - containerPort: 8083
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}

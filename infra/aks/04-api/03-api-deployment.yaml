@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api-gateway
+  name: api-gateway
+  namespace: aulainfra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - image: kong
+          imagePullPolicy: Always
+          name: kong
+          env:
+            - name: KONG_DATABASE
+              value: "off"
+            - name: KONG_PROXY_ACCESS_LOG
+              value: /dev/stdout
+            - name: KONG_ADMIN_ACCESS_LOG
+              value: /dev/stdout
+            - name: KONG_PROXY_ERROR_LOG
+              value: /dev/stderr
+            - name: KONG_ADMIN_ERROR_LOG
+              value: /dev/stderr
+            - name: KONG_ADMIN_LISTEN
+              value: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: app-configmap
+                  key: TZ
+          ports:
+            - containerPort: 8000
+            - containerPort: 8001
+          resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}

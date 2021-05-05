@@ -12,7 +12,7 @@ services:
 
   customers-svc:
     build:
-      context: ./customers
+      context: ./app/customers
     container_name: customers-svc
     restart: always
     mem_limit: 512M
@@ -34,7 +34,7 @@ services:
   
   visits-svc:
     build:
-      context: ./visits
+      context: ./app/visits
     container_name: visits-svc
     restart: always
     mem_limit: 512M
@@ -56,7 +56,7 @@ services:
 
   vets-svc:
     build:
-      context: ./vets
+      context: ./app/vets
     container_name: vets-svc
     restart: always
     mem_limit: 512M
@@ -76,7 +76,7 @@ services:
       - KONG_ADMIN_ACCESS_LOG=/dev/stdout
       - KONG_PROXY_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_ERROR_LOG=/dev/stderr
-      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001
     depends_on:
       - vets-svc
       - visits-svc
@@ -86,16 +86,18 @@ services:
 
   configure-kong:
     build:
-      context: ./kong
+      context: ./app/kong
     container_name: configure-kong
     depends_on:
       - kong
 
   frontend:
     build:
-      context: ./frontend
+      context: ./app/frontend
     container_name: frontend
     mem_limit: 512M
+    environment:
+      - APP_API=http://localhost:8000/
     depends_on:
       - vets-svc
       - visits-svc
