@@ -1,4 +1,4 @@
 target
 .terraform
-*.tfstate
+*.tfstate*
 *.tfvars
