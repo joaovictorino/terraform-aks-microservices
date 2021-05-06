@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: virtualservice-app-visits
+  namespace: aulainfra
+spec:
+  hosts:
+    - visits-svc.aulainfra.svc.cluster.local
+  http:
+    - route:
+      - destination:
+          host: visits-svc.aulainfra.svc.cluster.local
+          port:
+            number: 8082

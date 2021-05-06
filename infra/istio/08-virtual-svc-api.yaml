@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: virtualservice-api
+  namespace: aulainfra
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - gateway-api
+  http:
+    - route:
+      - destination:
+          host: api-gateway.aulainfra.svc.cluster.local
+          port:
+            number: 8000

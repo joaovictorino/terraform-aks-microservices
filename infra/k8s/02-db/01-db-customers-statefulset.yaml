@@ -2,19 +2,19 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: mysqldb-visits-stfs
-  name: mysqldb-visits-stfs
+    app: mysqldb-customers-stfs
+  name: mysqldb-customers-stfs
   namespace: aulainfra
 spec:
   selector:
     matchLabels:
-      app: mysqldb-visits-stfs
-  serviceName: "mysqldb-visits-stfs"
+      app: mysqldb-customers-stfs
+  serviceName: "mysqldb-customers-stfs"
   replicas: 1
   template:
     metadata:
       labels:
-        app: mysqldb-visits-stfs
+        app: mysqldb-customers-stfs
     spec:
       terminationGracePeriodSeconds: 20
       containers:
@@ -22,17 +22,17 @@ spec:
         - name: MYSQL_DATABASE
           valueFrom: 
             configMapKeyRef:
-              name: db-visits-configmap
+              name: db-customers-configmap
               key: MYSQL_DATABASE
         - name: MYSQL_ROOT_PASSWORD
           valueFrom: 
             configMapKeyRef:
-              name: db-visits-configmap
+              name: db-customers-configmap
               key: MYSQL_ROOT_PASSWORD
         - name: MYSQL_TCP_PORT
           valueFrom: 
             configMapKeyRef:
-              name: db-visits-configmap
+              name: db-customers-configmap
               key: MYSQL_TCP_PORT
         - name: TZ
           valueFrom: 
@@ -41,25 +41,25 @@ spec:
               key: TZ
         image: mysql:8.0
         imagePullPolicy: Always
-        name: mysqldb-visits-stfs
+        name: mysqldb-customers-stfs
         ports:
           - containerPort: 3306
         readinessProbe:
-            tcpSocket:
-              port: 3306
-            initialDelaySeconds: 5
-            periodSeconds: 5
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 5
+          periodSeconds: 5
         livenessProbe:
-            tcpSocket:
-              port: 3306
-            initialDelaySeconds: 10
-            periodSeconds: 20
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 10
+          periodSeconds: 20
         volumeMounts:
         - mountPath: /var/lib/mysql
-          name: db-visits-claim
+          name: db-customers-claim
   volumeClaimTemplates:
   - metadata:
-      name: db-visits-claim
+      name: db-customers-claim
       namespace: aulainfra
     spec:
       accessModes: [ "ReadWriteOnce" ]

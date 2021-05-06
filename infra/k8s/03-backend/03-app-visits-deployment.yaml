@@ -2,14 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: app-customers
-  name: app-customers
+    app: app-visits
+  name: app-visits
   namespace: aulainfra
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: app-customers
+      app: app-visits
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,12 +18,12 @@ spec:
   template:
     metadata:
       labels:
-        app: app-customers
+        app: app-visits
     spec:
       containers:
-      - image: aulainfraacr.azurecr.io/customers
+      - image: aulainfraacr.azurecr.io/visits
         imagePullPolicy: Always
-        name: backend-customers
+        name: backend-visits
         env:
           - name: TZ
             valueFrom:
@@ -31,13 +31,25 @@ spec:
                 name: app-configmap
                 key: TZ
           - name: MYSQL_URL
-            value: jdbc:mysql://mysqldb-customers/customers
+            value: jdbc:mysql://mysqldb-visits/visits
           - name: MYSQL_USER
             value: root
           - name: MYSQL_PASS
             value: root
         ports:
-          - containerPort: 8081
+          - containerPort: 8082
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 15
+          periodSeconds: 20
         resources: {}
       restartPolicy: Always
       serviceAccountName: ""

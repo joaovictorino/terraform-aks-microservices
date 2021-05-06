@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: virtualservice-app-vets
+  namespace: aulainfra
+spec:
+  hosts:
+    - vets-svc.aulainfra.svc.cluster.local
+  http:
+    - route:
+      - destination:
+          host: vets-svc.aulainfra.svc.cluster.local
+          port:
+            number: 8083

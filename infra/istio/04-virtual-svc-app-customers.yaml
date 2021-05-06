@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: virtualservice-app-customers
+  namespace: aulainfra
+spec:
+  hosts:
+    - customers-svc.aulainfra.svc.cluster.local
+  http:
+    - route:
+      - destination:
+          host: customers-svc.aulainfra.svc.cluster.local
+          port:
+            number: 8081

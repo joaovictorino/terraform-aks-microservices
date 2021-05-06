@@ -2,19 +2,19 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: mysqldb-customers-stfs
-  name: mysqldb-customers-stfs
+    app: mysqldb-vets-stfs
+  name: mysqldb-vets-stfs
   namespace: aulainfra
 spec:
   selector:
     matchLabels:
-      app: mysqldb-customers-stfs
-  serviceName: "mysqldb-customers-stfs"
+      app: mysqldb-vets-stfs
+  serviceName: "mysqldb-vets-stfs"
   replicas: 1
   template:
     metadata:
       labels:
-        app: mysqldb-customers-stfs
+        app: mysqldb-vets-stfs
     spec:
       terminationGracePeriodSeconds: 20
       containers:
@@ -22,17 +22,17 @@ spec:
         - name: MYSQL_DATABASE
           valueFrom: 
             configMapKeyRef:
-              name: db-customers-configmap
+              name: db-vets-configmap
               key: MYSQL_DATABASE
         - name: MYSQL_ROOT_PASSWORD
           valueFrom: 
             configMapKeyRef:
-              name: db-customers-configmap
+              name: db-vets-configmap
               key: MYSQL_ROOT_PASSWORD
         - name: MYSQL_TCP_PORT
           valueFrom: 
             configMapKeyRef:
-              name: db-customers-configmap
+              name: db-vets-configmap
               key: MYSQL_TCP_PORT
         - name: TZ
           valueFrom: 
@@ -41,25 +41,25 @@ spec:
               key: TZ
         image: mysql:8.0
         imagePullPolicy: Always
-        name: mysqldb-customers-stfs
+        name: mysqldb-vets-stfs
         ports:
           - containerPort: 3306
         readinessProbe:
-            tcpSocket:
-              port: 3306
-            initialDelaySeconds: 5
-            periodSeconds: 5
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 5
+          periodSeconds: 5
         livenessProbe:
-            tcpSocket:
-              port: 3306
-            initialDelaySeconds: 10
-            periodSeconds: 20
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 10
+          periodSeconds: 20
         volumeMounts:
         - mountPath: /var/lib/mysql
-          name: db-customers-claim
+          name: db-vets-claim
   volumeClaimTemplates:
   - metadata:
-      name: db-customers-claim
+      name: db-vets-claim
       namespace: aulainfra
     spec:
       accessModes: [ "ReadWriteOnce" ]
