@@ -4,6 +4,4 @@ metadata:
   name: db-vets-configmap
   namespace: aulainfra
 data:
-  MYSQL_ROOT_PASSWORD: root
   MYSQL_DATABASE: vets
-  MYSQL_TCP_PORT: "3306"

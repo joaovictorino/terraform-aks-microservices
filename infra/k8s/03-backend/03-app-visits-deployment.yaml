@@ -31,11 +31,20 @@ spec:
                 name: app-configmap
                 key: TZ
           - name: MYSQL_URL
-            value: jdbc:mysql://mysqldb-visits/visits
+            valueFrom:
+              configMapKeyRef:
+                name: app-visits-configmap
+                key: MYSQL_URL
           - name: MYSQL_USER
-            value: root
+            valueFrom:
+              configMapKeyRef:
+                name: app-configmap
+                key: MYSQL_USER
           - name: MYSQL_PASS
-            value: root
+            valueFrom:
+              configMapKeyRef:
+                name: app-configmap
+                key: MYSQL_PASS
         ports:
           - containerPort: 8082
         readinessProbe:

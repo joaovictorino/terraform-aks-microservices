@@ -27,12 +27,12 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom: 
             configMapKeyRef:
-              name: db-customers-configmap
+              name: db-configmap
               key: MYSQL_ROOT_PASSWORD
         - name: MYSQL_TCP_PORT
           valueFrom: 
             configMapKeyRef:
-              name: db-customers-configmap
+              name: db-configmap
               key: MYSQL_TCP_PORT
         - name: TZ
           valueFrom: 

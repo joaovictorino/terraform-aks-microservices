@@ -7,9 +7,11 @@ spec:
   hosts:
     - "*"
   gateways:
-    - gateway-api
+    - gateway-app
   http:
-    - route:
+    - match:
+      - port: 80
+      route:
       - destination:
           host: api-gateway.aulainfra.svc.cluster.local
           port:

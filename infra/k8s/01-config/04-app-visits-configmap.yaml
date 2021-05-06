@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-visits-configmap
+  namespace: aulainfra
+data:
+  MYSQL_URL: jdbc:mysql://mysqldb-customers/customers

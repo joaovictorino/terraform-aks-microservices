@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-customers-configmap
+  namespace: aulainfra
+data:
+  MYSQL_DATABASE: customers

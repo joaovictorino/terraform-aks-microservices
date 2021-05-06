@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-customers-configmap
+  namespace: aulainfra
+data:
+  MYSQL_URL: jdbc:mysql://mysqldb-customers/customers

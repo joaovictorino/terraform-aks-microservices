@@ -31,7 +31,10 @@ spec:
                 name: app-configmap
                 key: TZ
           - name: APP_API
-            value: "http://springapi.eastus.cloudapp.azure.com:8000/"
+            valueFrom:
+              configMapKeyRef:
+                name: app-configmap
+                key: APP_API
         ports:
           - containerPort: 8080
         readinessProbe:

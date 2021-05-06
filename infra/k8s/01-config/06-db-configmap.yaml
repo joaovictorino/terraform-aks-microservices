@@ -1,9 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: db-customers-configmap
+  name: db-configmap
   namespace: aulainfra
 data:
   MYSQL_ROOT_PASSWORD: root
-  MYSQL_DATABASE: customers
   MYSQL_TCP_PORT: "3306"

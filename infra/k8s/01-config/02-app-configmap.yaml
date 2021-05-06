@@ -5,3 +5,6 @@ metadata:
   namespace: aulainfra
 data:
   TZ: "America/Sao_Paulo"
+  MYSQL_USER: root
+  MYSQL_PASS: root
+  APP_API: "http://springapi.eastus.cloudapp.azure.com:8000/"

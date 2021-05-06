@@ -4,6 +4,4 @@ metadata:
   name: db-visits-configmap
   namespace: aulainfra
 data:
-  MYSQL_ROOT_PASSWORD: root
   MYSQL_DATABASE: visits
-  MYSQL_TCP_PORT: "3306"

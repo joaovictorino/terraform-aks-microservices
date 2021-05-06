@@ -1,15 +1,15 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: gateway-api
+  name: gateway-app
   namespace: aulainfra
 spec:
   selector:
     istio: ingressgateway
   servers:
     - port:
-        number: 8000
-        name: http
+        number: 80
+        name: http-80
         protocol: HTTP
       hosts:
         - "*"

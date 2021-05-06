@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-vets-configmap
+  namespace: aulainfra
+data:
+  MYSQL_URL: jdbc:mysql://mysqldb-customers/customers
