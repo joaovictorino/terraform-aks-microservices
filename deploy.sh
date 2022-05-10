@@ -40,6 +40,17 @@ docker push testemicroservicesacr.azurecr.io/visits:latest
 # obter credenciais do AKS
 az aks get-credentials --resource-group rg-microservices --name teste-aks --overwrite-existing
 
+cd ../../
+
+# instalar EFK
+kubectl apply -f infra/efk/01-namespace.yaml
+kubectl apply -f infra/efk/02-elastic-svc.yaml
+kubectl apply -f infra/efk/03-elastic-stateful.yaml
+kubectl apply -f infra/efk/04-kibana-svc.yaml
+kubectl apply -f infra/efk/05-kibana-deployment.yaml
+kubectl apply -f infra/efk/06-fluentd-security.yaml
+kubectl apply -f infra/efk/07-fluentd-daemon.yaml
+
 # instalar istio
 istioctl install -y
 
@@ -58,16 +69,7 @@ kubectl apply -f infra/k8s/05-frontend
 kubectl apply -f infra/k8s/06-kong
 
 # instalar virtual services
-kubectl apply -f istio -n aulainfra
-
-# instalar EFK
-kubectl apply -f efk/01-namespace.yaml
-kubectl apply -f efk/02-elastic-svc.yaml
-kubectl apply -f efk/03-elastic-stateful.yaml
-kubectl apply -f efk/04-fluentd-security.yaml
-kubectl apply -f efk/05-fluentd-daemon.yaml
-kubectl apply -f efk/06-kibana-svc.yaml
-kubectl apply -f efk/07-kibana-deployment.yaml
+kubectl apply -f infra/istio -n aulainfra
 
 # acessar
 # kubectl port-forward --namespace kube-logging svc/kibana 5602:5601
