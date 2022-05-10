@@ -29,7 +29,7 @@ terraform apply -auto-approve
 
 Get AKS credential
 ````sh
-az aks get-credentials --resource-group rg-aulainfra --name teste-aks
+az aks get-credentials --resource-group rg-microservices --name teste-aks
 ````
 
 Build docker images of microservices
@@ -48,34 +48,35 @@ docker build -t visits .
 
 Tagging images
 ````sh
-docker tag customers:latest aulainfraacr.azurecr.io/customers:latest
-docker tag frontend:latest aulainfraacr.azurecr.io/frontend:latest
-docker tag configure-kong:latest aulainfraacr.azurecr.io/configure-kong:latest
-docker tag vets:latest aulainfraacr.azurecr.io/vets:latest
-docker tag visits:latest aulainfraacr.azurecr.io/visits:latest
+docker tag customers:latest testemicroservicesacr.azurecr.io/customers:latest
+docker tag frontend:latest testemicroservicesacr.azurecr.io/frontend:latest
+docker tag configure-kong:latest testemicroservicesacr.azurecr.io/configure-kong:latest
+docker tag vets:latest testemicroservicesacr.azurecr.io/vets:latest
+docker tag visits:latest testemicroservicesacr.azurecr.io/visits:latest
 ````
 
 Logon private Azure Container Registry (ACR)
 ````sh
-az acr login --name aulainfraacr
+az acr login --name testemicroservicesacr
 ````
 
 Push imagens from local to ACR
 ````sh
-docker push aulainfraacr.azurecr.io/customers:latest
-docker push aulainfraacr.azurecr.io/frontend:latest
-docker push aulainfraacr.azurecr.io/configure-kong:latest
-docker push aulainfraacr.azurecr.io/vets:latest
-docker push aulainfraacr.azurecr.io/visits:latest
+docker push testemicroservicesacr.azurecr.io/customers:latest
+docker push testemicroservicesacr.azurecr.io/frontend:latest
+docker push testemicroservicesacr.azurecr.io/configure-kong:latest
+docker push testemicroservicesacr.azurecr.io/vets:latest
+docker push testemicroservicesacr.azurecr.io/visits:latest
 ````
 
 Apply kubernetes configuration
 ````sh
-kubectl apply -f aks/01-config
-kubectl apply -f aks/02-db
-kubectl apply -f aks/03-backend
-kubectl apply -f aks/04-api
-kubectl apply -f aks/05-frontend
+kubectl apply -f k8s/01-config
+kubectl apply -f k8s/02-db
+kubectl apply -f k8s/03-backend
+kubectl apply -f k8s/04-api
+kubectl apply -f k8s/05-frontend
+kubectl apply -f k8s/06-kong
 ````
 
 Install Istio on AKS

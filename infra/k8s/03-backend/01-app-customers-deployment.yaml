@@ -21,7 +21,7 @@ spec:
         app: app-customers
     spec:
       containers:
-      - image: aulainfraacr.azurecr.io/customers
+      - image: testemicroservicesacr.azurecr.io/customers
         imagePullPolicy: Always
         name: backend-customers
         env:

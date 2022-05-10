@@ -21,7 +21,7 @@ spec:
         app: frontend
     spec:
       containers:
-      - image: aulainfraacr.azurecr.io/frontend
+      - image: testemicroservicesacr.azurecr.io/frontend
         imagePullPolicy: Always
         name: frontend
         env:

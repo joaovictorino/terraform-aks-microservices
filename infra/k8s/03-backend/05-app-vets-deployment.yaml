@@ -21,7 +21,7 @@ spec:
         app: app-vets
     spec:
       containers:
-      - image: aulainfraacr.azurecr.io/vets
+      - image: testemicroservicesacr.azurecr.io/vets
         imagePullPolicy: Always
         name: backend-vets
         env:

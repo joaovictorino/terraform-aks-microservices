@@ -7,6 +7,6 @@ metadata:
   namespace: aulainfra
 spec:
   containers:
-  - image: aulainfraacr.azurecr.io/configure-kong
+  - image: testemicroservicesacr.azurecr.io/configure-kong
     name: configure-kong
   restartPolicy: OnFailure

@@ -11,7 +11,7 @@ variable "project_name" {
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                     = "${var.project_name}acr"
+  name                     = "teste${var.project_name}acr"
   resource_group_name      = var.azurerm_resource_group_name
   location                 = var.azurerm_resource_group_location
   sku                      = "Basic"
