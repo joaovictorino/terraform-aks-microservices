@@ -1,25 +1,15 @@
-# login azure (primeira execução)
-az login
+#!/bin/bash
 
-# criar chaves de acesso ao Azure para o terraform (primeira execução)
-az ad sp create-for-rbac --skip-assignment
-
-cd terraform
+cd infra/terraform
 
 # iniciar terraform (primeira execução)
-terraform init
-
-# planejar alterações
-terraform plan
+terraform init -upgrade
 
 # alterar ambiente
-terraform apply
-
-# obter credenciais do AKS
-az aks get-credentials --resource-group rg-microservices --name teste-aks
+terraform apply -auto-approve
 
 # compilar imagens
-cd app/customers
+cd ../../app/customers
 docker build -t customers .
 cd ../frontend
 docker build -t frontend .
@@ -47,10 +37,39 @@ docker push testemicroservicesacr.azurecr.io/configure-kong:latest
 docker push testemicroservicesacr.azurecr.io/vets:latest
 docker push testemicroservicesacr.azurecr.io/visits:latest
 
+# obter credenciais do AKS
+az aks get-credentials --resource-group rg-microservices --name teste-aks --overwrite-existing
+
+# instalar istio
+istioctl install -y
+
+# verificar instalação
+istioctl verify-install
+
+# instalar monitoramento
+kubectl apply -f infra/istio/monitoring
+
 # subir configuração da aplicação
-kubectl apply -f k8s/01-config
-kubectl apply -f k8s/02-db
-kubectl apply -f k8s/03-backend
-kubectl apply -f k8s/04-api
-kubectl apply -f k8s/05-frontend
-kubectl apply -f k8s/06-kong
+kubectl apply -f infra/k8s/01-config
+kubectl apply -f infra/k8s/02-db
+kubectl apply -f infra/k8s/03-backend
+kubectl apply -f infra/k8s/04-api
+kubectl apply -f infra/k8s/05-frontend
+kubectl apply -f infra/k8s/06-kong
+
+# instalar virtual services
+kubectl apply -f istio -n aulainfra
+
+# instalar EFK
+kubectl apply -f efk/01-namespace.yaml
+kubectl apply -f efk/02-elastic-svc.yaml
+kubectl apply -f efk/03-elastic-stateful.yaml
+kubectl apply -f efk/04-fluentd-security.yaml
+kubectl apply -f efk/05-fluentd-daemon.yaml
+kubectl apply -f efk/06-kibana-svc.yaml
+kubectl apply -f efk/07-kibana-deployment.yaml
+
+# acessar
+# kubectl port-forward --namespace kube-logging svc/kibana 5602:5601
+# curl http://springapp.eastus.cloudapp.azure.com/
+# istioctl dashboard [kiali grafana prometheus]
