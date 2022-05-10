@@ -4,4 +4,4 @@ metadata:
   name: app-visits-configmap
   namespace: aulainfra
 data:
-  MYSQL_URL: jdbc:mysql://mysqldb-customers/customers
+  MYSQL_URL: jdbc:mysql://mysqldb-visits/visits

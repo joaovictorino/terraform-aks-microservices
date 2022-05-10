@@ -79,19 +79,9 @@ Verify installation
 istioctl verify-install
 ````
 
-Install Istio configuration files
-````sh
-kubectl apply -f istio -n aulainfra
-````
-
 Install observability tools
 ````sh
 kubectl apply -f istio/monitoring
-````
-
-Access monitoring dashboards
-````sh
-istioctl dashboard [kiali grafana prometheus]
 ````
 
 Apply kubernetes configuration
@@ -104,7 +94,17 @@ kubectl apply -f k8s/05-frontend
 kubectl apply -f k8s/06-kong
 ````
 
+Install Istio configuration files
+````sh
+kubectl apply -f istio -n aulainfra
+````
+
 Access application
 ````sh
 curl http://springapp.eastus.cloudapp.azure.com/
+````
+
+Access monitoring dashboards
+````sh
+istioctl dashboard [kiali grafana prometheus]
 ````

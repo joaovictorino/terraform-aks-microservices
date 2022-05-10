@@ -4,4 +4,4 @@ metadata:
   name: app-vets-configmap
   namespace: aulainfra
 data:
-  MYSQL_URL: jdbc:mysql://mysqldb-customers/customers
+  MYSQL_URL: jdbc:mysql://mysqldb-vets/vets
