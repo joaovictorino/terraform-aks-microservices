@@ -69,16 +69,6 @@ docker push testemicroservicesacr.azurecr.io/vets:latest
 docker push testemicroservicesacr.azurecr.io/visits:latest
 ````
 
-Apply kubernetes configuration
-````sh
-kubectl apply -f k8s/01-config
-kubectl apply -f k8s/02-db
-kubectl apply -f k8s/03-backend
-kubectl apply -f k8s/04-api
-kubectl apply -f k8s/05-frontend
-kubectl apply -f k8s/06-kong
-````
-
 Install Istio on AKS
 ````sh
 istioctl install
@@ -96,12 +86,22 @@ kubectl apply -f istio -n aulainfra
 
 Install observability tools
 ````sh
-kubectl apply -f istio/monitoring -n aulainfra
+kubectl apply -f istio/monitoring
 ````
 
 Access monitoring dashboards
 ````sh
 istioctl dashboard [kiali grafana prometheus]
+````
+
+Apply kubernetes configuration
+````sh
+kubectl apply -f k8s/01-config
+kubectl apply -f k8s/02-db
+kubectl apply -f k8s/03-backend
+kubectl apply -f k8s/04-api
+kubectl apply -f k8s/05-frontend
+kubectl apply -f k8s/06-kong
 ````
 
 Access application
