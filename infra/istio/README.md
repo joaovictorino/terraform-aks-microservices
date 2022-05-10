@@ -25,7 +25,7 @@ kubectl apply -f istio -n aulainfra
 
 Fazer deploy das ferramentas de monitoramento
 ````sh
-kubectl apply -f istio/monitoring -n aulainfra
+kubectl apply -f istio/monitoring
 ````
 
 Acessar os dashboards de monitoramento
