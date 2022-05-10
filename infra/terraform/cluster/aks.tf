@@ -19,6 +19,8 @@ resource "azurerm_kubernetes_cluster" "default" {
   location            = var.azurerm_resource_group_location
   resource_group_name = var.azurerm_resource_group_name
   dns_prefix          = "teste-k8s"
+  http_application_routing_enabled = true
+  role_based_access_control_enabled = true
 
   default_node_pool {
     name            = "default"
@@ -30,15 +32,5 @@ resource "azurerm_kubernetes_cluster" "default" {
   service_principal {
     client_id     = var.appId
     client_secret = var.password
-  }
-
-  role_based_access_control {
-    enabled = true
-  }
-
-  addon_profile {
-    http_application_routing {
-      enabled = true
-    }
   }
 }

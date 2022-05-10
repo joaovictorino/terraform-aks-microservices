@@ -2,3 +2,4 @@ target
 .terraform
 *.tfstate*
 *.tfvars
+infra/terraform/.terraform.lock.hcl
