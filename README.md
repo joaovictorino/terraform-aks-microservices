@@ -27,11 +27,6 @@ Execute Terraform files
 terraform apply -auto-approve
 ````
 
-Get AKS credential
-````sh
-az aks get-credentials --resource-group rg-microservices --name teste-aks
-````
-
 Build docker images of microservices
 ````sh
 cd app/customers
@@ -69,6 +64,11 @@ docker push testemicroservicesacr.azurecr.io/vets:latest
 docker push testemicroservicesacr.azurecr.io/visits:latest
 ````
 
+Get AKS credential
+````sh
+az aks get-credentials --resource-group rg-microservices --name teste-aks
+````
+
 Install Istio on AKS
 ````sh
 istioctl install
@@ -97,6 +97,30 @@ kubectl apply -f k8s/06-kong
 Install Istio configuration files
 ````sh
 kubectl apply -f istio -n aulainfra
+````
+
+Instalar ElasticSearch
+````sh
+kubectl apply -f efk/01-namespace.yaml
+kubectl apply -f efk/02-elastic-svc.yaml
+kubectl apply -f efk/03-elastic-stateful.yaml
+````
+
+Instalar Fluentd
+````sh
+kubectl apply -f efk/04-fluentd-security.yaml
+kubectl apply -f efk/05-fluentd-daemon.yaml
+````
+
+Instalar Kibana
+````sh
+kubectl apply -f efk/06-kibana-svc.yaml
+kubectl apply -f efk/07-kibana-deployment.yaml
+````
+
+Access Kibana
+````sh
+kubectl port-forward --namespace kube-logging svc/kibana 5602:5601
 ````
 
 Access application
