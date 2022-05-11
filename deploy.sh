@@ -73,5 +73,5 @@ kubectl apply -f infra/istio -n aulainfra
 
 # acessar
 # kubectl port-forward --namespace kube-logging svc/kibana 5602:5601
-# curl http://springapp.eastus.cloudapp.azure.com/
+# curl http://springapp.westus.cloudapp.azure.com/
 # istioctl dashboard [kiali grafana prometheus]

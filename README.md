@@ -125,7 +125,7 @@ kubectl port-forward --namespace kube-logging svc/kibana 5602:5601
 
 Access application
 ````sh
-curl http://springapp.eastus.cloudapp.azure.com/
+curl http://springapp.westus.cloudapp.azure.com/
 ````
 
 Access monitoring dashboards

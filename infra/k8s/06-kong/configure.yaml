@@ -1,12 +1,16 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: myapp
+  annotations:
+    sidecar.istio.io/inject: "false"
   labels:
     name: myapp
+  name: myapp
   namespace: aulainfra
 spec:
   containers:
   - image: testemicroservicesacr.azurecr.io/configure-kong
     name: configure-kong
-  restartPolicy: OnFailure
+    resources: {}
+  restartPolicy: Never
+status: {}
