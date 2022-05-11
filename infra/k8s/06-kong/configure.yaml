@@ -12,5 +12,5 @@ spec:
   - image: testemicroservicesacr.azurecr.io/configure-kong
     name: configure-kong
     resources: {}
-  restartPolicy: Never
+  restartPolicy: OnFailure
 status: {}
