@@ -102,25 +102,24 @@ kubectl apply -f istio -n aulainfra
 Instalar ElasticSearch
 ````sh
 kubectl apply -f efk/01-namespace.yaml
-kubectl apply -f efk/02-elastic-svc.yaml
-kubectl apply -f efk/03-elastic-stateful.yaml
-````
-
-Instalar Fluentd
-````sh
-kubectl apply -f efk/04-fluentd-security.yaml
-kubectl apply -f efk/05-fluentd-daemon.yaml
+kubectl apply -f efk/02-elastic.yaml
 ````
 
 Instalar Kibana
 ````sh
-kubectl apply -f efk/06-kibana-svc.yaml
-kubectl apply -f efk/07-kibana-deployment.yaml
+kubectl apply -f efk/03-kibana.yaml
 ````
 
-Access Kibana
+Instalar FileBeat
 ````sh
-kubectl port-forward --namespace kube-logging svc/kibana 5602:5601
+kubectl apply -f efk/04-filebeat.yaml
+````
+
+Access Kibana e Elastic
+````sh
+kubectl port-forward deployment/kibana 5601 -n kube-logging
+kubectl port-forward sts/elasticsearch-master 9200 -n kube-logging
+curl http://localhost:9200/_cat/indices?v
 ````
 
 Access application

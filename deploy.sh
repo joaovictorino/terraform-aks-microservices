@@ -42,14 +42,16 @@ az aks get-credentials --resource-group rg-microservices --name teste-aks --over
 
 cd ../../
 
-# instalar EFK
-kubectl apply -f infra/efk/01-namespace.yaml
-kubectl apply -f infra/efk/02-elastic-svc.yaml
-kubectl apply -f infra/efk/03-elastic-stateful.yaml
-kubectl apply -f infra/efk/04-kibana-svc.yaml
-kubectl apply -f infra/efk/05-kibana-deployment.yaml
-kubectl apply -f infra/efk/06-fluentd-security.yaml
-kubectl apply -f infra/efk/07-fluentd-daemon.yaml
+# instalar Elastic Stack
+kubectl apply -f infra/elastic/01-namespace.yaml
+kubectl apply -f infra/elastic/02-elastic.yaml
+
+sleep 180
+
+kubectl apply -f infra/elastic/03-kibana.yaml
+kubectl apply -f infra/elastic/04-filebeat.yaml
+
+sleep 60
 
 # instalar istio
 istioctl install -y
@@ -58,7 +60,12 @@ istioctl install -y
 istioctl verify-install
 
 # instalar monitoramento
-kubectl apply -f infra/istio/monitoring
+kubectl apply -f infra/istio/monitoring/01-prometheus.yaml
+kubectl apply -f infra/istio/monitoring/02-grafana.yaml
+kubectl apply -f infra/istio/monitoring/03-jaeger.yaml
+kubectl apply -f infra/istio/monitoring/04-kiali.yaml
+sleep 30
+kubectl apply -f infra/istio/monitoring/05-kiali-monitoring.yaml
 
 # subir configuração da aplicação
 kubectl apply -f infra/k8s/01-config
@@ -72,6 +79,8 @@ kubectl apply -f infra/k8s/06-kong
 kubectl apply -f infra/istio -n aulainfra
 
 # acessar
-# kubectl port-forward --namespace kube-logging svc/kibana 5602:5601
+# kubectl port-forward deployment/kibana 5601 -n kube-logging
+# kubectl port-forward sts/elasticsearch-master 9200 -n kube-logging
+# curl http://localhost:9200/_cat/indices?v
 # curl http://springapp.westus.cloudapp.azure.com/
 # istioctl dashboard [kiali grafana prometheus]

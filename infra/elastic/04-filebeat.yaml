@@ -1,0 +1,249 @@
+# Source: filebeat/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat
+  namespace: kube-logging
+  annotations:
+  labels:
+    app: "RELEASE-NAME-filebeat"
+    chart: "filebeat-7.17.3"
+    heritage: "Helm"
+    release: "RELEASE-NAME"
+---
+# Source: filebeat/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-daemonset-config
+  namespace: kube-logging
+  labels:
+    app: "filebeat"
+    chart: "filebeat-7.17.3"
+    heritage: "Helm"
+data:
+  filebeat.yml: |
+    filebeat.inputs:
+    - type: container
+      paths:
+        - /var/log/containers/*.log
+      processors:
+      - add_kubernetes_metadata:
+          host: ${NODE_NAME}
+          matchers:
+          - logs_path:
+              logs_path: "/var/log/containers/"
+    
+    output.elasticsearch:
+      host: '${NODE_NAME}'
+      hosts: '${ELASTICSEARCH_HOSTS:elasticsearch-master:9200}'
+---
+# Source: filebeat/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: filebeat-cluster-role
+  namespace: kube-logging
+  labels:
+    app: "filebeat"
+    chart: "filebeat-7.17.3"
+    heritage: "Helm"
+rules: 
+  - apiGroups:
+    - ""
+    resources:
+    - namespaces
+    - nodes
+    - pods
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - apps
+    resources:
+    - replicasets
+    verbs:
+    - get
+    - list
+    - watch
+---
+# Source: filebeat/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: filebeat-cluster-role-binding
+  namespace: kube-logging
+  labels:
+    app: "filebeat"
+    chart: "filebeat-7.17.3"
+    heritage: "Helm"
+roleRef:
+  kind: ClusterRole
+  name: filebeat-cluster-role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: filebeat
+  namespace: kube-logging
+---
+# Source: filebeat/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: filebeat-role
+  namespace: kube-logging
+  labels:
+    app: "filebeat"
+rules:
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs: ["get", "create", "update"]
+---
+# Source: filebeat/templates/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: filebeat-role-binding
+  namespace: kube-logging
+  labels:
+    app: "filebeat"
+    chart: "filebeat-7.17.3"
+    heritage: "Helm"
+roleRef:
+  kind: Role
+  name: filebeat-role
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: filebeat
+  namespace: kube-logging
+---
+# Source: filebeat/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: filebeat
+  namespace: kube-logging
+  labels:
+    app: "filebeat"
+    chart: "filebeat-7.17.3"
+    heritage: "Helm"
+spec:
+  selector:
+    matchLabels:
+      app: "filebeat"
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        configChecksum: dcc319eb087339696cdef7ac2024167428854a67e17ca14fd54c152f707cad3
+      name: "filebeat"
+      labels:
+        app: "filebeat"
+        chart: "filebeat-7.17.3"
+        heritage: "Helm"
+    spec:
+      tolerations: 
+        []
+      nodeSelector: 
+        {}
+      affinity: 
+        {}
+      serviceAccountName: filebeat
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: filebeat-config
+        configMap:
+          defaultMode: 0600
+          name: filebeat-daemonset-config
+      - name: data
+        hostPath:
+          path: /var/lib/filebeat-default-data
+          type: DirectoryOrCreate
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varrundockersock
+        hostPath:
+          path: /var/run/docker.sock
+      containers:
+      - name: "filebeat"
+        image: "docker.elastic.co/beats/filebeat:7.17.3"
+        imagePullPolicy: "IfNotPresent"
+        args:
+        - "-e"
+        - "-E"
+        - "http.enabled=true"
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              #!/usr/bin/env bash -e
+              curl --fail 127.0.0.1:5066
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - |
+              #!/usr/bin/env bash -e
+              filebeat test output
+          failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        envFrom: 
+          []
+        securityContext: 
+          privileged: false
+          runAsUser: 0
+        volumeMounts:
+        - name: filebeat-config
+          mountPath: /usr/share/filebeat/filebeat.yml
+          readOnly: true
+          subPath: filebeat.yml
+        - name: data
+          mountPath: /usr/share/filebeat/data
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: varlog
+          mountPath: /var/log
+          readOnly: true
+        # Necessary when using autodiscovery; avoid mounting it otherwise
+        # See: https://www.elastic.co/guide/en/beats/filebeat/7.17/configuration-autodiscover.html
+        - name: varrundockersock
+          mountPath: /var/run/docker.sock
+          readOnly: true
+---
