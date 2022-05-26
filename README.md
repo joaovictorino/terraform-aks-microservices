@@ -14,7 +14,7 @@ az login
 
 Create RBAC key for first execution
 ````sh
-az ad sp create-for-rbac --skip-assignment
+az ad sp create-for-rbac
 ````
 
 Inside terraform folder, execute terraform initialization
