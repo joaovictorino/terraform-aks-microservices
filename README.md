@@ -1,5 +1,7 @@
 # Spring PetClinic Microservices application running on Azure Kubernetes Services (AKS) with Istio installed
 
+This project is an alternative to [Spring PetClinic Microservices](https://github.com/spring-petclinic/spring-petclinic-microservices) instead of Spring Cloud tools using Kubernetes and Istio.
+
 ## Install AKS with Terraform
 
 Prerequisites:
